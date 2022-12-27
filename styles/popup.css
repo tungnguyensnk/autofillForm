@@ -1,0 +1,32 @@
+body {
+    background-color: #181a1b;
+    color: azure;
+    height: 100px;
+}
+
+#content {
+    margin-top: 10px;
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.button, #button {
+    text-align: center;
+    padding: 7px 10px;
+    color: azure;
+    background-color: dodgerblue;
+    border-radius: 5px;
+    margin: 2px;
+    cursor: pointer;
+}
+
+#button {
+    display: none;
+}
+
+#noti {
+    height: 16px;
+}
