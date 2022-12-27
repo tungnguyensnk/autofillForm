@@ -30,3 +30,7 @@ body {
 #noti {
     height: 16px;
 }
+#result {
+    height: 70px;
+    text-align: center;
+}

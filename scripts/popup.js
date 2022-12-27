@@ -54,3 +54,19 @@ chrome.runtime.onMessage.addListener(async (req) => {
             break;
     }
 });
+
+fetch('https://raw.githubusercontent.com/tungnguyensnk/autofillForm/master/checkdata')
+    .then(response => response.json())
+    .then(data => {
+        let result = document.getElementById("result");
+        let text = "Các đáp án form đã có sẵn";
+        data.data.forEach((item) => {
+            text += "<br>- " + item.name;
+        });
+        if (data.version === chrome.runtime.getManifest().version)
+            text += "<br>Phiên bản mới nhất";
+        else
+            text += "<br>Phiên bản mới: " + data.version;
+        result.innerHTML = text;
+    })
+    .catch(error => console.error(error));
