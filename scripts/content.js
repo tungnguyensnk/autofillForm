@@ -32,16 +32,7 @@ chrome.runtime.onMessage.addListener(async (data) => {
 });
 
 let getQA = () => {
-    let i = 1;
-    do {
-        let tmp = document.querySelector("#form-main-content > div > div.office-form.office-form-theme-shadow > div.office-form-body > div.office-form-question-body > div:nth-child(" + i + ")");
-        if (tmp !== null) {
-            QAinHTML.push(tmp);
-            i++;
-        } else {
-            break;
-        }
-    } while (1);
+    QAinHTML=Array.from(document.querySelectorAll('[data-automation-id="questionItem"]'))
 };
 
 let getQuestion = (data) => {
@@ -54,21 +45,9 @@ let getQuestion = (data) => {
 };
 
 let pickAnswer = (element, data) => {
-    let i = 1;
-    do {
-        let tmp = element.querySelector("div.office-form-question-choice:nth-child(" + i + ")  > div > label > input");
-        if (tmp !== null) {
-            if (tmp.value.includes(data.answer)) {
-                if (data.not !== undefined && tmp.value.includes(data.not)) {
-                    i++;
-                    continue;
-                }
-                tmp.click();
-                break;
-            }
-            i++;
-        } else {
-            break;
+    Array.from(element.querySelectorAll(`input[value="${data.answer}"]`)).forEach(
+        (v,i)=>{
+            v.click();
         }
-    } while (1);
+    )
 };
