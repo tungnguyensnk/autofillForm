@@ -1,7 +1,7 @@
-let QAinHTML = [];
-let send = (data) => chrome.runtime.sendMessage(data);
+let listQuestionInHTML = [];
+const send = (data) => chrome.runtime.sendMessage(data);
 
-function waitForElement(selector) {
+const waitForElement = (selector) => {
     return new Promise((resolve) => {
         const interval = setInterval(() => {
             const element = document.querySelector(selector);
@@ -17,35 +17,26 @@ waitForElement('#form-main-content').then(async (element) => {
     await send({"type": "loaded"});
 });
 
-chrome.runtime.onMessage.addListener(async (data) => {
-    console.log(data);
-    switch (data.type) {
+chrome.runtime.onMessage.addListener(async (response) => {
+    switch (response.type) {
         case "data":
-            getQA();
-            for (const item of data.data.data) {
-                getQuestion(item);
+            if (window.location.href !== response.data.link) {
+                window.location.href = response.data.link;
             }
-            QAinHTML[QAinHTML.length - 1].scrollIntoView();
+            getQuestionInHTML();
+            response.data.data.forEach(getQuestionFromData);
+            scrollToSubmit();
             await send({"type": "done"});
             break;
     }
 });
 
-let getQA = () => {
-    let i = 1;
-    do {
-        let tmp = document.querySelector("#form-main-content > div > div.office-form.office-form-theme-shadow > div.office-form-body > div.office-form-question-body > div:nth-child(" + i + ")");
-        if (tmp !== null) {
-            QAinHTML.push(tmp);
-            i++;
-        } else {
-            break;
-        }
-    } while (1);
+const getQuestionInHTML = () => {
+    listQuestionInHTML = document.querySelectorAll('[data-automation-id="questionItem"]');
 };
 
-let getQuestion = (data) => {
-    QAinHTML.forEach((item) => {
+const getQuestionFromData = (data) => {
+    listQuestionInHTML.forEach((item) => {
         if (item.innerText.includes(data.question)) {
             pickAnswer(item, data);
             return true;
@@ -53,22 +44,12 @@ let getQuestion = (data) => {
     });
 };
 
-let pickAnswer = (element, data) => {
-    let i = 1;
-    do {
-        let tmp = element.querySelector("div.office-form-question-choice:nth-child(" + i + ")  > div > label > input");
-        if (tmp !== null) {
-            if (tmp.value.includes(data.answer)) {
-                if (data.not !== undefined && tmp.value.includes(data.not)) {
-                    i++;
-                    continue;
-                }
-                tmp.click();
-                break;
-            }
-            i++;
-        } else {
-            break;
-        }
-    } while (1);
+const pickAnswer = (element, data) => {
+    Array.from(element.querySelectorAll('[data-automation-id="choiceItem"]')).filter((item) =>
+        item.innerText.includes(data.answer) && !item.innerText.includes(data?.not)
+    )[0]?.querySelector('input').click();
 };
+
+const scrollToSubmit = () => {
+    document.querySelector('[data-automation-id="submitButton"]').scrollIntoView();
+}

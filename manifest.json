@@ -1,24 +1,13 @@
 {
   "name": "Nô lệ DRL",
-  "description": "",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "manifest_version": 3,
-  "omnibox": {
-    "keyword": "nt"
-  },
   "action": {
     "default_icon": {
       "16": "images/search16.png",
       "32": "images/search32.png"
     },
     "default_popup": "popup.html"
-  },
-  "background": {
-    "service_worker": "scripts/background.js"
-  },
-  "icons": {
-    "16": "images/search16.png",
-    "32": "images/search32.png"
   },
   "permissions": [
     "storage",
@@ -35,8 +24,5 @@
         "scripts/content.js"
       ]
     }
-  ],
-  "permission": [
-    "activeTab"
   ]
 }

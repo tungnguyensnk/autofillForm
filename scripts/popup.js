@@ -1,8 +1,8 @@
-let tab, data;
+let tab, data, id;
 chrome.storage.local.get("data", (req) => {
     data = req.data;
     if (data !== undefined) {
-        showNoti("Đã có data");
+        showNotification("Đã có data");
         let button = document.getElementById("button");
         button.style.display = "block";
     }
@@ -10,20 +10,18 @@ chrome.storage.local.get("data", (req) => {
 chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
     tab = tabs[0];
 });
-let id;
-let showNoti = (text) => {
-    let noti = document.getElementById("noti");
-    noti.innerHTML = text;
+
+let showNotification = (text) => {
+    let notification = document.getElementById("notification");
+    notification.innerHTML = text;
     if (id !== undefined)
         clearTimeout(id);
-    id = setTimeout(() => {
-        noti.innerHTML = "";
-    }, 2000);
+    id = setTimeout(() => notification.innerHTML = "", 2000);
 }
 let send = (data) => chrome.tabs.sendMessage(tab.id, data);
 document.getElementById("file").onchange = () => {
     const file = document.getElementById("file").files[0];
-    showNoti("Đã chọn file " + file.name);
+    showNotification("Đã chọn file " + file.name);
     let label = document.querySelector("#content > label");
     if (file) {
         label.style.display = "none";
@@ -33,7 +31,7 @@ document.getElementById("file").onchange = () => {
             data = JSON.parse(evt.target.result + '');
             if (data.link !== undefined) {
                 await chrome.storage.local.set({"data": data});
-                showNoti("Đang chuyển hướng...");
+                showNotification("Đang chuyển hướng...");
                 await chrome.tabs.update({url: data.link});
             }
         }
@@ -45,12 +43,12 @@ chrome.runtime.onMessage.addListener(async (req) => {
     switch (req.type) {
         case "loaded":
             if (data.length !== 0) {
-                showNoti("Đang làm bài...");
+                showNotification("Đang làm bài...");
                 send({"type": "data", "data": data});
             }
             break;
         case "done":
-            showNoti("Đã hoàn thành! Nộp bài thôi!");
+            showNotification("Đã hoàn thành! Nộp bài thôi!");
             break;
     }
 });
@@ -59,14 +57,14 @@ fetch('https://raw.githubusercontent.com/tungnguyensnk/autofillForm/master/check
     .then(response => response.json())
     .then(data => {
         let result = document.getElementById("result");
-        let text = "Các đáp án form đã có sẵn";
+        let text = "Các đáp án form đã có sẵn<br/>(click để tải)";
         data.data.forEach((item) => {
-            text += "<br>- " + item.name;
+            text += `<br>-> <a href="${item.link}" target="_blank" style="color: aqua">${item.name}</a>`;
         });
         if (data.version === chrome.runtime.getManifest().version)
             text += "<br>Phiên bản mới nhất";
         else
-            text += "<br>Phiên bản mới: " + data.version;
+            text += "<br>Có phiên bản mới: <a href='https://github.com/tungnguyensnk/autofillForm/releases' target='_blank' style='color: red'>tại đây</a>";
         result.innerHTML = text;
     })
     .catch(error => console.error(error));
