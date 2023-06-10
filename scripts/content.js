@@ -13,7 +13,7 @@ const waitForElement = (selector) => {
     });
 }
 
-waitForElement('#form-main-content').then(async (element) => {
+waitForElement('#content-root').then(async (element) => {
     await send({"type": "loaded"});
 });
 
