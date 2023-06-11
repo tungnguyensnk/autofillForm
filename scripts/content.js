@@ -13,7 +13,7 @@ const waitForElement = (selector) => {
     });
 }
 
-waitForElement('#content-root').then(async (element) => {
+waitForElement('[data-automation-id="submitButton"]').then(async (element) => {
     await send({"type": "loaded"});
 });
 
